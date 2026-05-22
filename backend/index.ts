@@ -1,7 +1,9 @@
 import express, { text } from "express"
 import { tavily } from '@tavily/core'
 import 'dotenv/config'
-import { streamText } from 'ai';
+// import { streamText } from 'ai';
+import { GoogleGenAI } from "@google/genai";
+
 import { PROMPT_TEMPLATE, SYSTEM_PROMPT } from "./prompt";
 
 
@@ -9,6 +11,11 @@ const app = express()
 
 
 app.use(express.json())
+
+const ai = new GoogleGenAI({
+    apiKey: process.env.AI_GATEWAY_API_KEY
+});
+
 
 const client = tavily({ apiKey: process.env.TAVILY_API_KEY });
 
@@ -33,24 +40,38 @@ app.post('/pureplexity-ask', async (req, res)=>{
     .replace("{{WEB_SEARCH_RESULTS}}" , JSON.stringify(webSearchResult))
     .replace("{{USER_QUERY}}" , query)
 
-    const result = streamText({
-        model: 'openai/gpt-5.4',
-        prompt: 'Invent a new holiday and describe its traditions.',
-        system : SYSTEM_PROMPT
+    // const result = streamText({
+    //     model: 'openai/gpt-5.4',
+    //     prompt: 'Invent a new holiday and describe its traditions.',
+    //     system : SYSTEM_PROMPT
+    //   });
+    const result = await ai.models.generateContentStream({
+        model: "gemini-3.5-flash",
+        contents: query,
+        config: {
+            systemInstruction: SYSTEM_PROMPT,
+          },
       });
+    
+    
 
     // hit the llm ? llm apikey/openrouter/ vercel ai gateway
 
-    for await (const textPart of result.textStream) {
-        res.write(textPart)
+    // for await (const textPart of result.textStream) {
+    //     res.write(textPart)
+    //   }
+
+    for await (const chunk of result) {
+        res.write(chunk.text);
       }
 
 
-      res.write(`\n ------------ SOURCE -------------\n`)
+      res.write(`\n<SOURCE>\n`)
+      
+      res.write(JSON.stringify(webSearchResult.map( result => ({ url: result.url}))))
 
-
-      webSearchResult.forEach(result => res.write(JSON.stringify(result)))
-
+      res.write(`\n</SOURCE>\n`)
+      res.end()
     //also stream back the source and the follow up questions 
 
 })
