@@ -30,7 +30,10 @@ async function createUSer(){
         }
     })
 }
+createUSer()
 
+
+app
 
 app.post('/pureplexity-ask', async (req, res)=>{
 
