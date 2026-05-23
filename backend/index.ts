@@ -6,12 +6,15 @@ import { GoogleGenAI } from "@google/genai";
 import {prisma} from "./utils/db";
 
 import { PROMPT_TEMPLATE, SYSTEM_PROMPT } from "./prompt";
+import { middleware } from "./middleware";
+import cors from "cors"
 
 
 const app = express()
 
 
 app.use(express.json())
+app.use(cors())
 
 const ai = new GoogleGenAI({
     apiKey: process.env.AI_GATEWAY_API_KEY
@@ -33,9 +36,17 @@ async function createUSer(){
 createUSer()
 
 
-app
+app.get('/conversations', middleware, async (req , res )=>{
+    res.json({
+        userId : req.userId
+    })
+})
 
-app.post('/pureplexity-ask', async (req, res)=>{
+app.post('/conversation:conversationId',middleware, async (req , res )=>{
+
+})
+
+app.post('/pureplexity-ask',middleware, async (req, res)=>{
 
     //get the query from the user 
     const query = req.body.query
@@ -91,7 +102,11 @@ app.post('/pureplexity-ask', async (req, res)=>{
 
 })
 
+app.post("/pureplexity_ask/follow_up",middleware, async (req, res)=>{
 
-app.listen(3000, ()=>{
+})
+
+
+app.listen(3001, ()=>{
     console.log("server is running on port 3000");
 })

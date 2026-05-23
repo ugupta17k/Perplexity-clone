@@ -9,12 +9,6 @@ export default function Auth(){
         const {data , error} = await supabase.auth.signInWithOAuth({
             provider:provider,
           })
-        if(error){
-            alert("Error while signing up")
-        }
-        else {
-            alert("signed In")
-        }
     }
 
     return <div>
