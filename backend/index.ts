@@ -3,6 +3,7 @@ import { tavily } from '@tavily/core'
 import 'dotenv/config'
 // import { streamText } from 'ai';
 import { GoogleGenAI } from "@google/genai";
+import {prisma} from "./utils/db";
 
 import { PROMPT_TEMPLATE, SYSTEM_PROMPT } from "./prompt";
 
@@ -18,6 +19,17 @@ const ai = new GoogleGenAI({
 
 
 const client = tavily({ apiKey: process.env.TAVILY_API_KEY });
+
+
+async function createUSer(){
+    await prisma.user.create({
+        data:{
+            email:"ujjwalg@gmail.com",
+            name:"ujjwalll",
+            provider:"google"
+        }
+    })
+}
 
 
 app.post('/pureplexity-ask', async (req, res)=>{
