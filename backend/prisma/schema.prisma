@@ -17,7 +17,7 @@ datasource db {
 
 model User {
   id          String     @id     @default(uuid())
-  email       String    
+  email       String    @unique
   provider    Authprovider
   name        String 
   supabaseId  String
@@ -48,6 +48,6 @@ enum MessageRole{
 }
 
 enum Authprovider{
-  github 
-  google
+  Github 
+  Google
 }

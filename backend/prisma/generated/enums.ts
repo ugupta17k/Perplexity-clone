@@ -18,8 +18,8 @@ export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole]
 
 
 export const Authprovider = {
-  github: 'github',
-  google: 'google'
+  Github: 'Github',
+  Google: 'Google'
 } as const
 
 export type Authprovider = (typeof Authprovider)[keyof typeof Authprovider]

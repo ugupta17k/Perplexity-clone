@@ -24,18 +24,6 @@ const ai = new GoogleGenAI({
 const client = tavily({ apiKey: process.env.TAVILY_API_KEY });
 
 
-async function createUSer(){
-    await prisma.user.create({
-        data:{
-            email:"ujjwalg@gmail.com",
-            name:"ujjwalll",
-            provider:"google"
-        }
-    })
-}
-createUSer()
-
-
 app.get('/conversations', middleware, async (req , res )=>{
     res.json({
         userId : req.userId
@@ -108,5 +96,5 @@ app.post("/pureplexity_ask/follow_up",middleware, async (req, res)=>{
 
 
 app.listen(3001, ()=>{
-    console.log("server is running on port 3000");
+    console.log("server is running on port 3001");
 })

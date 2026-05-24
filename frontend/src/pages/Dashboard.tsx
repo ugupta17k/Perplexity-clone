@@ -26,7 +26,7 @@ export default function Dashboard(){
             if(users){
                 const { data :{session}} = await supabase.auth.getSession();
                 const jwt = session?.access_token
-                const res =  await axios.get(`${BACKEND_URL}/conversations `,{
+                const res =  await axios.get(`${BACKEND_URL}/conversations`,{
                     headers:{
                         Authorization : jwt
                     }
