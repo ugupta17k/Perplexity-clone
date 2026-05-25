@@ -24,22 +24,39 @@ const ai = new GoogleGenAI({
 const client = tavily({ apiKey: process.env.TAVILY_API_KEY });
 
 
+
+
 app.get('/conversations', middleware, async (req , res )=>{
     res.json({
         userId : req.userId
     })
 })
 
-app.post('/conversation:conversationId',middleware, async (req , res )=>{
+app.get('/conversation:conversationId',middleware, async (req , res )=>{
+    const userId = req.userId
+    const conversationId = req.params.conversationId as string
+    const conversationTitle = req.body.conversationTitle
+
+    const findConversation = await prisma.conversation.findFirst({
+        where:{
+            id : conversationId,
+            title : conversationTitle
+        }
+    })
+    
+    res.json({
+        conversation : findConversation
+    })
 
 })
 
 app.post('/pureplexity-ask',middleware, async (req, res)=>{
-
+    
     //get the query from the user 
     const query = req.body.query
     //step - 2 make sure user has access/credis to hit the endpoint
     //step-3 (TODO) - check if we have web search indexed for a similar query
+    client.research
     //step 4 -  web search to gather sources
     const webSearchRes = await client.search(query, {
         searchDepth: "advanced"
@@ -93,7 +110,6 @@ app.post('/pureplexity-ask',middleware, async (req, res)=>{
 app.post("/pureplexity_ask/follow_up",middleware, async (req, res)=>{
 
 })
-
 
 app.listen(3001, ()=>{
     console.log("server is running on port 3001");
